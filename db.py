@@ -10,11 +10,9 @@ def connection():
             database='experiments'
         )
     except Exception as e:
-        print(e)
-        print("Couldn't connect to database!! Something went wrong...")
+        return e
     else:
-        print("\n Connection to database successfull !! \n")
-    return mydb
+        return mydb
 
 
 
@@ -23,20 +21,20 @@ def insert_into_student(data):
     try:
         mydb = connection()
     except Exception as e:
-        print(e)
-        print("Connection Failed !!!")
+        return e
     else:
         dbcursor = mydb.cursor()
         try:
             query = "insert into student values (%s, %s, %s, %s)"
             values = (data['id'], data['name'], data['department'], data['cgpa'])
-            dbcursor.execute(,data)
+            dbcursor.execute(query, values)
         except Exception as e:
-            print(e)
+            return e
         else:
-            print(dbcursor.rowcount,'record inserted')
+            msg = str(dbcursor.rowcount) + ' record inserted'
             mydb.commit()
             mydb.close()
+            return msg
 
 
 
@@ -45,19 +43,15 @@ def read_from_student():
     try:
         mydb = connection()
     except Exception as e:
-        print(e)
-        print("Connection Failed !!!")
+        return e
     else:
         dbcursor = mydb.cursor()
         try:
             dbcursor.execute("select * from student")
         except Exception as e:
-            print(e)
+            return e
         else:
             output = dbcursor.fetchall()
-            for i in output:
-                print(i)
-            print('\n',dbcursor.rowcount,'records fetched')
             mydb.close()
     return output
     
@@ -70,21 +64,20 @@ def update_student(data):
     try:
         mydb = connection()
     except Exception as e:
-        print(e)
-        print("Connection Failed !!!")
+        return e
     else:
         dbcursor = mydb.cursor()
         try:
-            query = "update student set " + data[0] +" = %s where "+ data[2] +" = %s"
-            input_var = (data[1], data[3])
+            query = "update student set " + data["change_col"] + " = %s where "+ data["where_col"] +" = %s"
+            input_var = (data["new_value"], data["where_value"])
             dbcursor.execute(query, input_var)
         except Exception as e:
-            print(e)
-            print('operation failed !!! Something went wrong...')
+            return e
         else:
-            print(dbcursor.rowcount,'record updated')
+            msg = str(dbcursor.rowcount) + ' record updated'
             mydb.commit()
             mydb.close()
+            return msg
 
 
 
@@ -93,18 +86,17 @@ def delete_from_student(data):
     try:
         mydb = connection()
     except Exception as e:
-        print(e)
-        print("Connection Failed !!!")
+        return e
     else:
         dbcursor = mydb.cursor()
         try:
-            query = "delete from student where +" + data[0] + " = %s"
-            input_var = (data[1],)
+            query = "delete from student where +" + data["where_col"] + " = %s"
+            input_var = (data["where_value"],)
             dbcursor.execute(query, input_var)
         except Exception as e:
-            print(e)
-            print('operation failed !!! Something went wrong...')
+            return e
         else:
-            print(dbcursor.rowcount,'record deleted')
+            msg = str(dbcursor.rowcount) + ' record deleted'
             mydb.commit()
             mydb.close()
+            return msg
