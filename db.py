@@ -1,13 +1,17 @@
 import mysql.connector as sql
+import json
+
+with open('config.json','r') as c:
+    db_credentials = json.load(c)["db_credentials"]
 
 def connection():
     
     try:
         mydb = sql.connect(
-            host='localhost',
-            user='ash3',
-            password='ash3',
-            database='experiments'
+            host = db_credentials['host'],
+            user = db_credentials['user'],
+            password = db_credentials['password'],
+            database = db_credentials['database']
         )
     except Exception as e:
         return e
