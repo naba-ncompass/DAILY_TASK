@@ -1,14 +1,14 @@
 from flask import Blueprint,jsonify
-import db
+from Utilities import db
 import json
-import controller
+from Student import controller
 
-bp = Blueprint('bp', __name__)
+bp_routes = Blueprint('bp_routes', __name__)
 
-bp.route('/')(controller.read_operation)
+bp_routes.route('/')(controller.read_operation)
 
-bp.route("/insert", methods=['POST'])(controller.insert_operation)
+bp_routes.route("/insert", methods=['POST'])(controller.insert_operation)
 
-bp.route("/update", methods=['PUT'])(controller.update_operation)
+bp_routes.route("/update", methods=['PUT'])(controller.update_operation)
 
-bp.route("/delete", methods=['DELETE'])(controller.delete_operation)
+bp_routes.route("/delete", methods=['DELETE'])(controller.delete_operation)
