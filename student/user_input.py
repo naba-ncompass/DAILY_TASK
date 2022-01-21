@@ -53,9 +53,9 @@ def get_delete_details():
 
 
 while 1:
-    user_choice = input('\nPress \n1 for read \n2 for insert \n3 for update \n4 for delete \n5 to exit \n')
+    choice = input('\nPress \n1 for read \n2 for insert \n3 for update \n4 for delete \n5 to exit \n')
     
-    match user_choice:
+    match choice:
         case '1':
             db.read_from_student()
         case '2':
