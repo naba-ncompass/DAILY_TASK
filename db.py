@@ -20,7 +20,7 @@ def connection():
 
 
 
-def insert_into_student(data):
+def insert_into_student(query):
     
     try:
         mydb = connection()
@@ -29,9 +29,7 @@ def insert_into_student(data):
     else:
         dbcursor = mydb.cursor()
         try:
-            query = "insert into student values (%s, %s, %s, %s)"
-            values = (data['id'], data['name'], data['department'], data['cgpa'])
-            dbcursor.execute(query, values)
+            dbcursor.execute(query)
         except Exception as e:
             return e
         else:
@@ -42,7 +40,7 @@ def insert_into_student(data):
 
 
 
-def read_from_student():
+def read_from_student(query):
 
     try:
         mydb = connection()
@@ -51,7 +49,7 @@ def read_from_student():
     else:
         dbcursor = mydb.cursor()
         try:
-            dbcursor.execute("select * from student")
+            dbcursor.execute(query)
         except Exception as e:
             return e
         else:
@@ -63,7 +61,7 @@ def read_from_student():
 
 
 
-def update_student(data):
+def update_student(query):
    
     try:
         mydb = connection()
@@ -72,9 +70,7 @@ def update_student(data):
     else:
         dbcursor = mydb.cursor()
         try:
-            query = "update student set " + data["change_col"] + " = %s where "+ data["where_col"] +" = %s"
-            input_var = (data["new_value"], data["where_value"])
-            dbcursor.execute(query, input_var)
+            dbcursor.execute(query)
         except Exception as e:
             return e
         else:
@@ -85,7 +81,7 @@ def update_student(data):
 
 
 
-def delete_from_student(data):
+def delete_from_student(query):
     
     try:
         mydb = connection()
@@ -94,9 +90,7 @@ def delete_from_student(data):
     else:
         dbcursor = mydb.cursor()
         try:
-            query = "delete from student where +" + data["where_col"] + " = %s"
-            input_var = (data["where_value"],)
-            dbcursor.execute(query, input_var)
+            dbcursor.execute(query)
         except Exception as e:
             return e
         else:
