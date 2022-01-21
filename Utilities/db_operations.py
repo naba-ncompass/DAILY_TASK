@@ -1,13 +1,18 @@
 
 #!/usr/bin/python3
-from venv import create
 import pymysql
+import json
+
+
+with open('Config/config.json') as f:
+    config = json.load(f)
+
 
 def create_connection():
     try:
         db = pymysql.connect(host='localhost',
-                             user='root',
-                             password='princess',
+                             user=config["DB_USER"],
+                             password=config["DB_PASS"],
                              database='Practice',
                              charset='utf8mb4',
                              cursorclass=pymysql.cursors.DictCursor)
@@ -16,12 +21,11 @@ def create_connection():
         return {"ERROR" : e}
 
 
-def insert_row(data):
+def insert_row(query):
     try:
         db = create_connection()
         cursor = db.cursor()
-        cursor.execute('INSERT INTO TvShows VALUES (%d , "%s" , "%s" );'%(
-            data['id'], data['name'], data['studio']))
+        cursor.execute(query)
         rc = cursor.rowcount
         db.commit()
         db.close()
@@ -30,12 +34,11 @@ def insert_row(data):
         return {"ERROR" : e}
 
 
-def update_row(data):
+def update_row(query):
     try:
         db = create_connection()
         cursor = db.cursor()
-        cursor.execute('UPDATE TvShows SET %s="%s" WHERE id = %d;'%(
-            data['column'], data['new_value'], data['id']))
+        cursor.execute(query)
         rc = cursor.rowcount
         db.commit()
         db.close()
@@ -44,11 +47,11 @@ def update_row(data):
         return {"ERROR" : e}
 
 
-def delete_row(data):
+def delete_row(query):
     try:
         db = create_connection()
         cursor = db.cursor()
-        cursor.execute('DELETE FROM TvShows WHERE id = %d ;'%(data['id']))
+        cursor.execute(query)
         rc = cursor.rowcount
         db.commit()
         db.close()
@@ -57,10 +60,10 @@ def delete_row(data):
         return {"ERROR" : e}
 
 
-def read_row():
+def read_row(query):
     db = create_connection()
     cursor= db.cursor()
-    cursor.execute('SELECT * FROM TvShows')
+    cursor.execute(query)
     data = cursor.fetchall()
     db.close()
     if len(data) == 0:
