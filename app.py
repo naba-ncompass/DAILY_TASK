@@ -5,7 +5,7 @@ import db
 app = Flask(__name__)
 
 @app.route("/")
-def hello_world():
+def read_operation():
     var = db.read_from_student()
     json_output = json.dumps(var)
     return jsonify(var)
@@ -14,22 +14,22 @@ def hello_world():
 def insert_operation():
     input_data = {}
     input_data = request.get_json()
-    msg = db.insert_into_student(input_data)
-    return msg
+    response = db.insert_into_student(input_data)
+    return response
 
 @app.route("/update", methods=['PUT'])
 def update_operation():
     input_data = {}
     input_data = request.get_json()
-    msg = db.update_student(input_data)
-    return msg
+    response = db.update_student(input_data)
+    return response
 
 @app.route("/delete", methods=['DELETE'])
 def delete_operation():
     input_data = {}
     input_data = request.get_json()
-    msg = db.delete_from_student(input_data)
-    return msg
+    response = db.delete_from_student(input_data)
+    return response
 
 if __name__ == '__main__':
     app.env = 'development'
