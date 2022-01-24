@@ -1,10 +1,11 @@
-from crypt import methods
-from urllib import response
 from flask import Flask 
+from Shows.routes import bp
+from Utilities.error_handler import err_bp
+
 
 app = Flask(__name__)
 
-from Shows.routes import bp
+app.register_blueprint(err_bp)
 app.register_blueprint(bp)
 
 if __name__  == "__main__":
