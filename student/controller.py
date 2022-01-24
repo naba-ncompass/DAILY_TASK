@@ -1,47 +1,76 @@
 from flask import jsonify,request
-from timeit import default_timer as timer
-from datetime import datetime,timedelta
-from Utilities import db
-import json
+from datetime import datetime
+from Utilities import db,error_handler
+from Student import validation
+
 
 def read_operation():
     start_time = datetime.now()
     query = "select * from student"
-    var = db.read_from_student(query)
-    return jsonify(give_response(data=var, message='operation successful', start_time=start_time))
+    output = db.read_from_table(query)
+    return jsonify(give_response(data=output, message='operation successful', start_time=start_time))
+
+
+def read_where_operation():
+    id = request.args['id']
+    start_time = datetime.now()
+    validity = validation.validate_read(id)
+    if isinstance(validity, bool):
+        query = f"select * from student where id = '{id}'"
+        output = db.read_from_table(query)
+        return jsonify(give_response(data=output, message='operation successful', start_time=start_time))
+    else:
+        return jsonify(error_handler.generate_error_response(validity))
+
 
 def insert_operation():
     start_time = datetime.now()
     input_data = {}
     input_data = request.get_json()
-    query = f"insert into student values ('{input_data['id']}', '{input_data['name']}', '{input_data['department']}', {input_data['cgpa']})"
-    message = db.insert_into_student(query)
-    return jsonify(give_response(data=[], message=message, start_time=start_time))
+    validity = validation.validate_insert(input_data)
+    if isinstance(validity, bool):
+        query = f"insert into student values ('{input_data['id']}', '{input_data['name']}', '{input_data['department']}', {input_data['cgpa']})"
+        message = db.insert_into_table(query)
+        return jsonify(give_response(data=[], message=message, start_time=start_time))
+    else:
+        return jsonify(error_handler.generate_error_response(validity))
+
 
 def update_operation():
     start_time = datetime.now()
     input_data = {}
     input_data = request.get_json()
-    new_value = check_value(input_data['change_col'],input_data['new_value'])
-    where_value = check_value(input_data['where_col'],input_data['where_value'])
-    query = f"update student set {input_data['change_col']} = {new_value} where {input_data['where_col']} = {where_value}"
-    message = db.update_student(query)
-    return jsonify(give_response(data=[], message=message, start_time=start_time))
+    validity = validation.validate_update(input_data)
+    if isinstance(validity, bool):
+        new_value = check_value(input_data['change_col'],input_data['new_value'])
+        where_value = check_value(input_data['where_col'],input_data['where_value'])
+        query = f"update student set {input_data['change_col']} = {new_value} where {input_data['where_col']} = {where_value}"
+        message = db.update_table(query)
+        return jsonify(give_response(data=[], message=message, start_time=start_time))
+    else:
+        return jsonify(error_handler.generate_error_response(validity))
+
 
 def delete_operation():
     start_time = datetime.now()
     input_data = {}
     input_data = request.get_json()
-    where_value = check_value(input_data['where_col'],input_data['where_value'])
-    query = f"delete from student where {input_data['where_col']} = {where_value}"
-    message = db.delete_from_student(query)
-    return jsonify(give_response(data=[], message=message, start_time=start_time))
+    validity = validation.validate_delete(input_data)
+    if isinstance(validity, bool):
+        where_value = check_value(input_data['where_col'],input_data['where_value'])
+        query = f"delete from student where {input_data['where_col']} = {where_value}"
+        message = db.delete_from_table(query)
+        return jsonify(give_response(data=[], message=message, start_time=start_time))
+    else:
+        return jsonify(error_handler.generate_error_response(validity))
+
 
 def check_value(data,value):
     if data == 'cgpa':
         return value
     else:
         return f'\'{value}\''
+
 
 def give_response(data,message,start_time):
     end_time = datetime.now()
