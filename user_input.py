@@ -47,11 +47,6 @@ def dml(choice):
     
 
 
-print("\n")
-schema = table_schema()
-for columns in schema:
-    print(columns)
-print("\n")
 
 choice = -1
 while(choice!=6):

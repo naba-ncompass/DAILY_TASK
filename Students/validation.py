@@ -1,5 +1,6 @@
 from cerberus import Validator
 
+
 def checkfirstLetter_upper(field,value,error):
     if value[0].islower():
         error(field,"First character must be an upperCase")
@@ -48,4 +49,3 @@ def check_delete(document):
         return True
     else:
         return v.errors
-
