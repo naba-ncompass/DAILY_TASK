@@ -1,6 +1,5 @@
 from flask import Blueprint,jsonify
 from werkzeug.exceptions import HTTPException
-import json
 
 bp_errors = Blueprint('bp_errors', __name__)
 
@@ -15,20 +14,27 @@ def handle_exception(e):
             "message": e.description
         }
         return jsonify(response)
+    elif isinstance(e, KeyError):
+        response = {
+            "success":False,
+            "data": [],
+            "message": f"Trying to access key {e.args} which does not exists !!"
+        }
+        return jsonify(response)
     else:
         response = {
             "success":False,
             "data": [],
             "message": "something went wrong!!!"
         }
-        return jsonify(response)
+        return response
 
 
-def generate_error_response(e):
+def generate_error_response(message):
 
     response = {
         "success":False,
         "data":[],
-        "message": e.msg
+        "message": message
     }
-    return jsonify(response)
+    return response
