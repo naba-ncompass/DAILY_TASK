@@ -8,8 +8,8 @@ def home():
 
 def read_from_db():
     if len(request.args)>0:
-        params = request.args
-        query = 'SELECT * FROM TvShows WHERE %s="%s"'%(params['column'],params['value'])
+        req_params = request.args
+        query = 'SELECT * FROM TvShows WHERE %s="%s"'%(req_params['column'],req_params['value'])
     else:
         query = 'SELECT * FROM TvShows'
     return custom_response_maker(read_row(query))
@@ -54,8 +54,6 @@ def delete_from_db():
     try:
         query = 'DELETE FROM TvShows WHERE id = %d ;'%(body['id'])
     except KeyError as e:
-      #print("KEY ERROR RESPONSE: ",e.args)
-      #print(dir(e))
         remodeled_err = {
             'err_code': 'Key Error',
             'message': 'Key error requires %s key'%(e.args[0])
