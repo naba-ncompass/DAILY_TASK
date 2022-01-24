@@ -1,6 +1,6 @@
 import mysql.connector as sql
-import json
 from Utilities import error_handler
+import json
 
 with open('config/config.json','r') as c:
     db_credentials = json.load(c)["db_credentials"]
@@ -14,88 +14,72 @@ def connection():
             password = db_credentials['password'],
             database = db_credentials['database']
         )
-    except Exception as e:
-        return error_handler.generate_error_response(e)
-    else:
         return mydb
+    except Exception as e:
+        return error_handler.generate_error_response('connection error')
+        
 
 
 
-def insert_into_student(query):
+def insert_into_table(query):
     
     try:
         mydb = connection()
-    except Exception as e:
-        return error_handler.generate_error_response(e)
-    else:
         dbcursor = mydb.cursor()
-        try:
-            dbcursor.execute(query)
-        except Exception as e:
-            return error_handler.generate_error_response(e)
-        else:
-            msg = str(dbcursor.rowcount) + ' record inserted'
-            mydb.commit()
-            mydb.close()
-            return msg
+        dbcursor.execute(query)
+        message = str(dbcursor.rowcount) + ' record inserted'
+        mydb.commit()
+        mydb.close()
+        return message
+    except Exception as e:
+        return error_handler.generate_error_response(e.msg)
+        
 
 
 
-def read_from_student(query):
+def read_from_table(query):
 
     try:
         mydb = connection()
-    except Exception as e:
-        return error_handler.generate_error_response(e)
-    else:
         dbcursor = mydb.cursor()
-        try:
-            dbcursor.execute(query)
-        except Exception as e:
-            return error_handler.generate_error_response(e)
-        else:
-            output = dbcursor.fetchall()
-            mydb.close()
-    return output
+        dbcursor.execute(query)
+        output = dbcursor.fetchall()
+        mydb.close()
+        return output
+    except Exception as e:
+        return error_handler.generate_error_response(e.msg)
+        
     
     
+    
 
 
 
-def update_student(query):
+def update_table(query):
    
     try:
         mydb = connection()
-    except Exception as e:
-        return error_handler.generate_error_response(e)
-    else:
         dbcursor = mydb.cursor()
-        try:
-            dbcursor.execute(query)
-        except Exception as e:
-            return error_handler.generate_error_response(e)
-        else:
-            msg = str(dbcursor.rowcount) + ' record updated'
-            mydb.commit()
-            mydb.close()
-            return msg
+        dbcursor.execute(query)
+        message = str(dbcursor.rowcount) + ' record updated'
+        mydb.commit()
+        mydb.close()
+        return message
+    except Exception as e:
+        return error_handler.generate_error_response(e.msg)
+        
 
 
 
-def delete_from_student(query):
+def delete_from_table(query):
     
     try:
         mydb = connection()
-    except Exception as e:
-        return error_handler.generate_error_response(e)
-    else:
         dbcursor = mydb.cursor()
-        try:
-            dbcursor.execute(query)
-        except Exception as e:
-            return error_handler.generate_error_response(e)
-        else:
-            msg = str(dbcursor.rowcount) + ' record deleted'
-            mydb.commit()
-            mydb.close()
-            return msg
+        dbcursor.execute(query)
+        message = str(dbcursor.rowcount) + ' record deleted'
+        mydb.commit()
+        mydb.close()
+        return message
+    except Exception as e:
+        return error_handler.generate_error_response(e.msg)
