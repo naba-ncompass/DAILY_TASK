@@ -34,3 +34,10 @@ def handle_exception(e):
         "data":[]
     }),content_type="application/json"),200
 
+def validation_err(e):
+    return Response(json.dumps({
+            "name":"Validation Error",
+            "description": str(e),
+            "data":[]
+        }),content_type="application/json"),200
+
