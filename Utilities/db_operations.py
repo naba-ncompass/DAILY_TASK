@@ -93,3 +93,4 @@ def device_operation(query):
         return {"data": data, "start_time": start, "end_time": end}
     except Exception as e:
         return generate_response(e)
+
