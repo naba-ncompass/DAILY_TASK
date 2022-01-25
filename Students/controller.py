@@ -2,6 +2,7 @@ from flask import jsonify , request
 from Utilities.db import *
 from Students.validation import *
 from Utilities.error_handler import validation_err
+import hashlib
 
 def create_Result(data,func_name):
     result = {}
@@ -15,9 +16,16 @@ def create_Result(data,func_name):
         result['message'] = f"{data} row inserted"
     elif(func_name == 'patch_record'):
         result['message'] = f"{data} row updated"
-    else:
+    elif(func_name == 'del_record'):
         result['message'] = f"{data} row deleted"
+    else:
+        result['message'] = f"User Accepted" if(data[0]!=0) else "No record, check username or password"
     return result
+
+
+def hash_value(password):
+    hash = hashlib.md5(password.encode())
+    return hash.hexdigest()
 
 
 def get_all_records():
@@ -44,9 +52,12 @@ def post_record():
     _id = body['id']
     name = body['name']
     dept = body['dept']
+    username = body['username']
+    password = body['password']
+    pass_digest = hash_value(password)
 
     if isinstance(check_post(body),bool) and check_post(body)==True:
-        sql_command = f"INSERT into students (id,name,dept) values ({_id},'{name}','{dept}')"
+        sql_command = f"INSERT into students (id,name,dept,username,password) values ({_id},'{name}','{dept}','{username}','{pass_digest}')"
         data = create_single_record(sql_command)
         result = create_Result(data,"post_record")
         return jsonify(result)
@@ -84,3 +95,18 @@ def del_record():
         return jsonify(result)
 
     return validation_err(check_delete(params))
+
+def login_record():
+    body = {}
+    body = request.get_json()
+    username = body['username']
+    password = body['password']
+    pass_digest = hash_value(password)
+
+    if isinstance(check_login(body),bool) and check_login(body)==True:
+        sql_command = f"SELECT EXISTS (SELECT * FROM students WHERE username = '{username}' and password = '{pass_digest}')"
+        data = check_record_exists(sql_command)
+        result = create_Result(data,"login_record")
+        return jsonify(result)
+
+    return validation_err(check_login(body))

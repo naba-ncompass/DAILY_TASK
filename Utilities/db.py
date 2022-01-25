@@ -65,6 +65,15 @@ def delete_record(sql_command):
     close_connection(sql_connector)
     return row_count
 
+def check_record_exists(sql_command):
+    sql_connector = create_connection()
+    cursor = sql_connector.cursor()
+    cursor.execute(sql_command)
+
+    result = cursor.fetchone()
+    close_connection(sql_connector)
+    return result
+
 # ------------- DEVICE  USECASE -----------------------#
 
 def create_connection_device():
