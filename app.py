@@ -12,4 +12,4 @@ app.register_blueprint(device_route.device_routes)
 if __name__ == '__main__':
     app.env = 'development'
     app.debug = True
-    app.run(host='merchant.c78uwveckyfx.us-east-1.rds.amazonaws.com',port=8001,debug=True)
+    app.run(host='0.0.0.0',port=8001,debug=True)
