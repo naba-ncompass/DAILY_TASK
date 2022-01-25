@@ -18,7 +18,7 @@ def give_response(data,message,start_time):
     return response
 
 
-def read_operation():
+def read_from_device():
     start_time = datetime.now()
     params = request.args
     validity = validation.validate_device(params)
