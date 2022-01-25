@@ -32,14 +32,14 @@ def give_hash(input):
     return hash.hexdigest()
 
 
-def read_operation():
+def read_from_student():
     start_time = datetime.now()
     query = "select * from student"
     output = db.read_from_table(query)
     return jsonify(give_response(data=output, message='operation successful', start_time=start_time))
 
 
-def read_where_operation():
+def read_where_from_student():
     id = request.args['id']
     start_time = datetime.now()
     validity = validation.validate_read(id)
@@ -51,7 +51,7 @@ def read_where_operation():
         return jsonify(error_handler.generate_error_response(validity))
 
 
-def insert_operation():
+def insert_in_student():
     start_time = datetime.now()
     input_data = {}
     input_data = request.get_json()
@@ -64,7 +64,7 @@ def insert_operation():
         return jsonify(error_handler.generate_error_response(validity))
 
 
-def update_operation():
+def update_in_student():
     start_time = datetime.now()
     input_data = {}
     input_data = request.get_json()
@@ -79,7 +79,7 @@ def update_operation():
         return jsonify(error_handler.generate_error_response(validity))
 
 
-def delete_operation():
+def delete_from_student():
     start_time = datetime.now()
     input_data = {}
     input_data = request.get_json()
