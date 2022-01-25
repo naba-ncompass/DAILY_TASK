@@ -19,7 +19,7 @@ def give_response(data,message,start_time):
     return response
 
 
-def check_value(data,value):
+def add_quotes(data,value):
     if data == 'cgpa':
         return value
     else:
@@ -70,8 +70,8 @@ def update_operation():
     input_data = request.get_json()
     validity = validation.validate_update(input_data)
     if isinstance(validity, bool):
-        new_value = check_value(input_data['change_col'],input_data['new_value'])
-        where_value = check_value(input_data['where_col'],input_data['where_value'])
+        new_value = add_quotes(input_data['change_col'],input_data['new_value'])
+        where_value = add_quotes(input_data['where_col'],input_data['where_value'])
         query = f"update student set {input_data['change_col']} = {new_value} where {input_data['where_col']} = {where_value}"
         message = db.update_table(query)
         return jsonify(give_response(data=[], message=message, start_time=start_time))
@@ -85,7 +85,7 @@ def delete_operation():
     input_data = request.get_json()
     validity = validation.validate_delete(input_data)
     if isinstance(validity, bool):
-        where_value = check_value(input_data['where_col'],input_data['where_value'])
+        where_value = add_quotes(input_data['where_col'],input_data['where_value'])
         query = f"delete from student where {input_data['where_col']} = {where_value}"
         message = db.delete_from_table(query)
         return jsonify(give_response(data=[], message=message, start_time=start_time))
