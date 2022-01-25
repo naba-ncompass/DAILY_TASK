@@ -5,6 +5,33 @@ from Student import validation
 import hashlib
 
 
+def give_response(data,message,start_time):
+    end_time = datetime.now()
+    duration = end_time - start_time
+    response = {
+        "start_time": start_time.strftime("%H:%M:%S.%f"),
+        "success": True,
+        "data": data,
+        "message":message,
+        "end_time": end_time.strftime("%H:%M:%S.%f"),
+        "duration":duration.total_seconds()
+    }
+    return response
+
+
+def check_value(data,value):
+    if data == 'cgpa':
+        return value
+    else:
+        return f'\'{value}\''
+
+
+
+def give_hash(input):
+    hash = hashlib.md5(input.encode())
+    return hash.hexdigest()
+
+
 def read_operation():
     start_time = datetime.now()
     query = "select * from student"
@@ -85,26 +112,3 @@ def student_login():
         return jsonify(error_handler.generate_error_response(validity))
 
 
-def check_value(data,value):
-    if data == 'cgpa':
-        return value
-    else:
-        return f'\'{value}\''
-
-
-def give_response(data,message,start_time):
-    end_time = datetime.now()
-    duration = end_time - start_time
-    response = {
-        "start_time": start_time.strftime("%H:%M:%S.%f"),
-        "success": True,
-        "data": data,
-        "message":message,
-        "end_time": end_time.strftime("%H:%M:%S.%f"),
-        "duration":duration.total_seconds()
-    }
-    return response
-
-def give_hash(input):
-    hash = hashlib.md5(input.encode())
-    return hash.hexdigest()

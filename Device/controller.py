@@ -4,6 +4,20 @@ from Utilities import db,error_handler,compression
 from Device import validation
 
 
+def give_response(data,message,start_time):
+    end_time = datetime.now()
+    duration = end_time - start_time
+    response = {
+        "start_time": start_time.strftime("%H:%M:%S.%f"),
+        "success": True,
+        "data": data,
+        "message":message,
+        "end_time": end_time.strftime("%H:%M:%S.%f"),
+        "duration":duration.total_seconds()
+    }
+    return response
+
+
 def read_operation():
     start_time = datetime.now()
     params = request.args
@@ -57,15 +71,3 @@ def duplicate_between_times():
 
 
 
-def give_response(data,message,start_time):
-    end_time = datetime.now()
-    duration = end_time - start_time
-    response = {
-        "start_time": start_time.strftime("%H:%M:%S.%f"),
-        "success": True,
-        "data": data,
-        "message":message,
-        "end_time": end_time.strftime("%H:%M:%S.%f"),
-        "duration":duration.total_seconds()
-    }
-    return response
