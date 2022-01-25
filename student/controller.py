@@ -2,6 +2,7 @@ from flask import jsonify,request
 from datetime import datetime
 from Utilities import db,error_handler
 from Student import validation
+import hashlib
 
 
 def read_operation():
@@ -29,7 +30,7 @@ def insert_operation():
     input_data = request.get_json()
     validity = validation.validate_insert(input_data)
     if isinstance(validity, bool):
-        query = f"insert into student values ('{input_data['id']}', '{input_data['name']}', '{input_data['department']}', {input_data['cgpa']})"
+        query = f"insert into student values ('{input_data['id']}', '{input_data['name']}', '{input_data['department']}', {input_data['cgpa']}, '{input_data['username']}', '{input_data['password']}')"
         message = db.insert_into_table(query)
         return jsonify(give_response(data=[], message=message, start_time=start_time))
     else:
@@ -65,6 +66,25 @@ def delete_operation():
         return jsonify(error_handler.generate_error_response(validity))
 
 
+def student_login():
+
+    start_time = datetime.now()
+    input_data = {}
+    input_data = request.get_json()
+    validity = validation.validate_insert(input_data)
+
+    if isinstance(validity, bool):
+        query = f"select password from student where username = '{input_data['username']}'"
+        store_password = db.read_from_table(query)
+
+        if give_hash(input_data['password']) == store_password[0][0]:
+            return jsonify(give_response(data=[], message="login successful !!", start_time=start_time))
+        else:
+            return jsonify(give_response(data=[], message="wrong username or password !!", start_time=start_time))
+    else:
+        return jsonify(error_handler.generate_error_response(validity))
+
+
 def check_value(data,value):
     if data == 'cgpa':
         return value
@@ -84,3 +104,7 @@ def give_response(data,message,start_time):
         "duration":duration.total_seconds()
     }
     return response
+
+def give_hash(input):
+    hash = hashlib.md5(input.encode())
+    return hash.hexdigest()

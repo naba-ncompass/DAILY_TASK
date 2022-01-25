@@ -12,3 +12,5 @@ student_routes.route("/insert", methods=['POST'])(controller.insert_operation)
 student_routes.route("/update", methods=['PUT'])(controller.update_operation)
 
 student_routes.route("/delete", methods=['DELETE'])(controller.delete_operation)
+
+student_routes.route("/login", methods=['POST'])(controller.student_login)

@@ -4,7 +4,9 @@ schema = {
     'id':{'type':'string', 'maxlength':4, 'regex':'^S+[0-9]+$'},
     'name':{'type':'string'},
     'department':{'type':'string'},
-    'cgpa':{'type':'float', 'min':0, 'max':10}
+    'cgpa':{'type':'float', 'min':0, 'max':10},
+    'username':{'type':'string','regex':'^[a-z0-9._%-]+@[a-z0-9.-]+\.[a-z]{2,4}$'},
+    'password':{'type':'string'}
 }
 
 def validate_insert(input_data):
