@@ -2,7 +2,8 @@ from flask import Flask, g, Response
 from Students.route import students_bp
 from Device.route import device_bp
 from Utilities.error_handler import err
-import time,json
+from Utilities.compression import *
+import time
 
 app = Flask(__name__)
 
@@ -27,8 +28,13 @@ def after_request_func(response):
     result['end_time_sec'] = time.perf_counter()
     result['duration_sec'] = result['end_time_sec'] - result['start_time_sec']
     result['duration_ms'] = int(result['duration_sec']*1000)
-    return Response(json.dumps(result)
-    ,content_type="application/json")
+
+    compressed_result = create_compression(result)
+    response = Response(compressed_result,
+    content_type="application/json"
+    )
+    response.content_encoding = 'gzip'
+    return response
 
 
 
