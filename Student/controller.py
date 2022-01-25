@@ -5,20 +5,6 @@ from Student import validation
 import hashlib
 
 
-def give_response(data,message,start_time):
-    end_time = datetime.now()
-    duration = end_time - start_time
-    response = {
-        "start_time": start_time.strftime("%H:%M:%S.%f"),
-        "success": True,
-        "data": data,
-        "message":message,
-        "end_time": end_time.strftime("%H:%M:%S.%f"),
-        "duration":duration.total_seconds()
-    }
-    return response
-
-
 def add_quotes(data,value):
     if data == 'cgpa':
         return value
@@ -36,7 +22,7 @@ def read_from_student():
     start_time = datetime.now()
     query = "select * from student"
     output = db.read_from_table(query)
-    return jsonify(give_response(data=output, message='operation successful', start_time=start_time))
+    return jsonify(error_handler.give_response(data=output, message='operation successful', start_time=start_time))
 
 
 def read_where_from_student():
@@ -46,7 +32,7 @@ def read_where_from_student():
     if isinstance(validity, bool):
         query = f"select * from student where id = '{id}'"
         output = db.read_from_table(query)
-        return jsonify(give_response(data=output, message='operation successful', start_time=start_time))
+        return jsonify(error_handler.give_response(data=output, message='operation successful', start_time=start_time))
     else:
         return jsonify(error_handler.generate_error_response(validity))
 
@@ -59,7 +45,7 @@ def insert_in_student():
     if isinstance(validity, bool):
         query = f"insert into student values ('{input_data['id']}', '{input_data['name']}', '{input_data['department']}', {input_data['cgpa']}, '{input_data['username']}', '{input_data['password']}')"
         message = db.insert_into_table(query)
-        return jsonify(give_response(data=[], message=message, start_time=start_time))
+        return jsonify(error_handler.give_response(data=[], message=message, start_time=start_time))
     else:
         return jsonify(error_handler.generate_error_response(validity))
 
@@ -74,7 +60,7 @@ def update_in_student():
         where_value = add_quotes(input_data['where_col'],input_data['where_value'])
         query = f"update student set {input_data['change_col']} = {new_value} where {input_data['where_col']} = {where_value}"
         message = db.update_table(query)
-        return jsonify(give_response(data=[], message=message, start_time=start_time))
+        return jsonify(error_handler.give_response(data=[], message=message, start_time=start_time))
     else:
         return jsonify(error_handler.generate_error_response(validity))
 
@@ -88,7 +74,7 @@ def delete_from_student():
         where_value = add_quotes(input_data['where_col'],input_data['where_value'])
         query = f"delete from student where {input_data['where_col']} = {where_value}"
         message = db.delete_from_table(query)
-        return jsonify(give_response(data=[], message=message, start_time=start_time))
+        return jsonify(error_handler.give_response(data=[], message=message, start_time=start_time))
     else:
         return jsonify(error_handler.generate_error_response(validity))
 
@@ -105,9 +91,9 @@ def student_login():
         store_password = db.read_from_table(query)
 
         if give_hash(input_data['password']) == store_password[0][0]:
-            return jsonify(give_response(data=[], message="login successful !!", start_time=start_time))
+            return jsonify(error_handler.give_response(data=[], message="login successful !!", start_time=start_time))
         else:
-            return jsonify(give_response(data=[], message="wrong username or password !!", start_time=start_time))
+            return jsonify(error_handler.give_response(data=[], message="wrong username or password !!", start_time=start_time))
     else:
         return jsonify(error_handler.generate_error_response(validity))
 
