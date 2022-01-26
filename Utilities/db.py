@@ -6,7 +6,7 @@ import json
 def create_connection():
     with open("Config/config.json") as f:
         config = json.load(f)
-    cnx = connection.MySQLConnection(**config["students"])
+    cnx = connection.MySQLConnection(**config["db_config"])
     return cnx
 
 
@@ -79,7 +79,7 @@ def check_record(sql_query):
 def create_connection_device():
     with open("Config/config.json") as f:
         config = json.load(f)
-    cnx2 = connection.MySQLConnection(**config["device"])
+    cnx2 = connection.MySQLConnection(**config["db_config"])
     return cnx2
 
 

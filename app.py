@@ -17,5 +17,9 @@ app.register_blueprint(device_bp,url_prefix='/device')
 
 
 if __name__ == '__main__':
-    app.env='development'
-    app.run(debug=True)
+    with open("Config/config.json") as f:
+        config = json.load(f)
+    app.run(host=config['app_config']['app_host'],
+        port=config['app_config']['app_port'],
+        debug=config['app_config']['app_debug']
+    )
