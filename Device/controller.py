@@ -2,7 +2,7 @@ from flask import request
 from Utilities.db_operations import *
 from Utilities.error_handler import custom_response_maker
 from .validation import *
-from .compression import compress_json
+from Utilities.compression import compress_json
 
 def get_sum_consumption():
     req_params = request.args

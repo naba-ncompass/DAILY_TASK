@@ -4,14 +4,14 @@ import time
 from .error_handler import *
 with open('Config/config.json') as f:
     config = json.load(f)
-
+    db_config = config["DB_CONFIG"]
 
 def create_connection():
     try:
-        db = pymysql.connect(host='localhost',
-                             user=config["DB_USER"],
-                             password=config["DB_PASS"],
-                             database='Practice',
+        db = pymysql.connect(host=db_config["DB_HOST"],
+                             user=db_config["DB_USER"],
+                             password=db_config["DB_PASS"],
+                             database=db_config["DB"],
                              charset='utf8mb4',
                              cursorclass=pymysql.cursors.DictCursor)
         return db
