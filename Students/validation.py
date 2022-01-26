@@ -1,4 +1,6 @@
 from cerberus import Validator
+from flask import jsonify
+import hashlib
 
 v = Validator()
 
@@ -45,3 +47,17 @@ def validate_login(body):
             "message": parse_err(v.errors)
         }
 
+def validate_password(user_password,res_body):
+
+    # hashing password from user to compare
+    plaintext = hashlib.md5(res_body['password'].encode())
+    hashed_password = plaintext.hexdigest()
+
+    if user_password == hashed_password:
+        return jsonify({
+            "message": "user : %s is logged in" % (res_body['username'])
+        })
+    else:
+        return jsonify({
+            "message": "user : %s password is wrong" % (res_body['username'])
+        })

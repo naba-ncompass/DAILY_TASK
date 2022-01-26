@@ -12,7 +12,6 @@ def create_user():
     if(isinstance(validate_insert(body), dict)):
         return custom_response_maker(validate_insert(body))
 
-    # hashing password
     plaintext = hashlib.md5(body['password'].encode())
     hashed_password = plaintext.hexdigest()
     try:
@@ -39,6 +38,7 @@ def show_users():
     return custom_response_maker(read_row(query))
 
 
+
 def login_user():
     body = {}
     body = request.get_json()
@@ -56,19 +56,5 @@ def login_user():
         }
         return custom_response_maker(remodeled_err)
 
-    # retrieving password from db
     res = read_row(query)
-    user_password = res['data'][0]['password']
-
-    # hashing password from user to compare
-    plaintext = hashlib.md5(body['password'].encode())
-    hashed_password = plaintext.hexdigest()
-
-    if user_password == hashed_password:
-        return jsonify({
-            "message": "user : %s is logged in" % (body['username'])
-        })
-    else:
-        return jsonify({
-            "message": "user : %s password is wrong" % (body['username'])
-        })
+    return validate_password(res['data'][0]['password'],body)
