@@ -1,0 +1,5 @@
+Config/
+__pycache__/
+Device/__pycache__
+Employee/__pycache__
+Utilities/__pycache__
