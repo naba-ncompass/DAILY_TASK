@@ -2,12 +2,12 @@ from cerberus import Validator
 
 def check(document):
     schema = {
-        'start_time':{
+        'time1':{
             'type':'string',
             'maxlength':8,
             'regex':'^[0-1][0-9]:[0-5][0-9]:[0-5][0-9]$|^[2][0-3]:[0-5][0-9]:[0-5][0-9]'
         },
-        'end_time':{
+        'time2':{
             'type':'string',
             'maxlength':8,
             'regex':'^[0-1][0-9]:[0-5][0-9]:[0-5][0-9]$|^[2][0-3]:[0-5][0-9]:[0-5][0-9]'

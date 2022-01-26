@@ -14,10 +14,10 @@ def close_connection(sql_connector):
     sql_connector.close()
 
 
-def create_single_record(sql_command):
+def create(sql_query):
     sql_connector = create_connection()
     cursor = sql_connector.cursor()
-    cursor.execute(sql_command)
+    cursor.execute(sql_query)
 
     sql_connector.commit()
     row_count = cursor.rowcount
@@ -25,50 +25,50 @@ def create_single_record(sql_command):
     return row_count
     
 
-def read_all_records(sql_command):
+def read_all(sql_query):
     sql_connector = create_connection()
     cursor = sql_connector.cursor()
-    cursor.execute(sql_command)
+    cursor.execute(sql_query)
 
     results = cursor.fetchall()
     close_connection(sql_connector)
     return results
 
 
-def read_specific_record(sql_command):
+def read_specific(sql_query):
     sql_connector = create_connection()
     cursor = sql_connector.cursor()
-    cursor.execute(sql_command)
+    cursor.execute(sql_query)
 
     record = cursor.fetchone()
     close_connection(sql_connector)
     return record
 
 
-def update_record(sql_command):
+def update(sql_query):
     sql_connector = create_connection()
     cursor = sql_connector.cursor()
-    cursor.execute(sql_command)
+    cursor.execute(sql_query)
     
     sql_connector.commit()
     row_count = cursor.rowcount
     close_connection(sql_connector)
     return row_count
 
-def delete_record(sql_command):
+def delete(sql_query):
     sql_connector = create_connection()
     cursor = sql_connector.cursor()
-    cursor.execute(sql_command)
+    cursor.execute(sql_query)
 
     sql_connector.commit()
     row_count = cursor.rowcount
     close_connection(sql_connector)
     return row_count
 
-def check_record_exists(sql_command):
+def check_record(sql_query):
     sql_connector = create_connection()
     cursor = sql_connector.cursor()
-    cursor.execute(sql_command)
+    cursor.execute(sql_query)
 
     result = cursor.fetchone()
     close_connection(sql_connector)
@@ -87,28 +87,28 @@ def close_connection_device(sql_connector):
     sql_connector.close()
 
 
-def read_peak_consumption_between_times(sql_command):
+def read_peak_consumption(sql_query):
     sql_connector1 = create_connection_device()
     cursor = sql_connector1.cursor()
-    cursor.execute(sql_command)
+    cursor.execute(sql_query)
 
     record = cursor.fetchone()
     close_connection_device(sql_connector1)
     return record
 
-def read_sum_consumption_between_times(sql_command):
+def read_sum_consumption(sql_query):
     sql_connector1 = create_connection_device()
     cursor = sql_connector1.cursor()
-    cursor.execute(sql_command)
+    cursor.execute(sql_query)
 
     record = cursor.fetchone()
     close_connection_device(sql_connector1)
     return record
 
-def read_duplicate_time_between_times(sql_command):
+def read_duplicate_time(sql_query):
     sql_connector1 = create_connection_device()
     cursor = sql_connector1.cursor()
-    cursor.execute(sql_command)
+    cursor.execute(sql_query)
 
     record = cursor.fetchall()
     close_connection_device(sql_connector1)

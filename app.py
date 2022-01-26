@@ -1,47 +1,21 @@
-from flask import Flask, g, Response
+from flask import Flask
 from Students.route import students_bp
 from Device.route import device_bp
 from Utilities.error_handler import err
 from Utilities.compression import *
-import time
+
 
 app = Flask(__name__)
-
-@app.route("/")
-@app.route("/home")
-def home():
-    return "<h1>Welcome Home Page!</h1>"
 
 app.register_blueprint(err)
 app.register_blueprint(students_bp,url_prefix='/records')
 app.register_blueprint(device_bp,url_prefix='/device')
 
 
-@app.before_request
-def before_request_func():
-    g.start_time = time.perf_counter()
-
-@app.after_request
-def after_request_func(response):
-    result = dict(response.json)
-    result['start_time_sec'] = g.start_time
-    result['end_time_sec'] = time.perf_counter()
-    result['duration_sec'] = result['end_time_sec'] - result['start_time_sec']
-    result['duration_ms'] = int(result['duration_sec']*1000)
-
-    compressed_result = create_compression(result)
-    response = Response(compressed_result,
-    content_type="application/json"
-    )
-    response.content_encoding = 'gzip'
-    return response
 
 
 
 
-
-
-    
 if __name__ == '__main__':
     app.env='development'
     app.run(debug=True)
