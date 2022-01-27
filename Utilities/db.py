@@ -83,7 +83,7 @@ def delete_from_table(query):
         return error_handler.generate_error_response(e.msg)
 
 
-def give_response(data,message,start_time):
+def give_response(data,message,start_time,token=None):
     end_time = datetime.now()
     duration = end_time - start_time
     response = {
@@ -92,6 +92,7 @@ def give_response(data,message,start_time):
         "data": data,
         "message":message,
         "end_time": end_time.strftime("%H:%M:%S.%f"),
+        "token":token,
         "duration":duration.total_seconds()
     }
     return response
