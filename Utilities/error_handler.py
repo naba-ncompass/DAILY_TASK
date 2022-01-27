@@ -22,7 +22,6 @@ def handle_badrequest(e):
     }
     return custom_response_maker(response)
 
-
 def custom_response_maker(res):
     message = ''
     is_success = False

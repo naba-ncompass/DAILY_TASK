@@ -1,8 +1,11 @@
+from cmath import log
+from os import access
 from flask import request, jsonify
 from Utilities.db_operations import *
 from Utilities.error_handler import custom_response_maker
 from .validation import *
 import hashlib
+from flask_jwt_extended import create_access_token, decode_token
 
 
 def create_user():
@@ -27,15 +30,18 @@ def create_user():
 
 
 def show_users():
-    try:
-        query = 'SELECT * FROM Students'
-    except KeyError as e:
-        remodeled_err = {
-            'err_code': 'Key Error',
-            'message': 'Key error requires %s key' % (e.args[0])
-        }
-        return custom_response_maker(remodeled_err)
-    return custom_response_maker(read_row(query))
+    if authorize(request):
+        try:
+            query = 'SELECT * FROM Students'
+        except KeyError as e:
+            remodeled_err = {
+                'err_code': 'Key Error',
+                'message': 'Key error requires %s key' % (e.args[0])
+            }
+            return custom_response_maker(remodeled_err)
+        return custom_response_maker(read_row(query))
+    else:
+        return { "msg" : "unauthorized user"}
 
 
 
@@ -57,4 +63,27 @@ def login_user():
         return custom_response_maker(remodeled_err)
 
     res = read_row(query)
-    return validate_password(res['data'][0]['password'],body)
+    login_res = validate_password(res['data'][0]['password'],body)
+    if login_res["is_success"]:
+        access_token = create_access_token(identity=body['username'])
+        return access_token
+    else:
+        return login_res
+
+
+def authorize(req):
+    try:
+        token = req.headers['AUTHORIZATION'].split(' ')[1]
+    except KeyError as e:
+        print(req.headers)
+        return False
+    username = decode_token(token)['sub']
+
+    query = 'SELECT username FROM Students WHERE username="%s";'%(username)
+    data= read_row(query)
+    db_user = data['data'][0]['username']
+
+    if db_user == username:
+        return True
+    else:
+        return False

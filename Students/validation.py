@@ -54,10 +54,13 @@ def validate_password(user_password,res_body):
     hashed_password = plaintext.hexdigest()
 
     if user_password == hashed_password:
-        return jsonify({
-            "message": "user : %s is logged in" % (res_body['username'])
-        })
+        return {
+            "is_success": True,
+            "message": "user : %s is logged in" % (res_body['username']),
+            "access_token": ''
+        }
     else:
-        return jsonify({
+        return {
+            "is_success": False,
             "message": "user : %s password is wrong" % (res_body['username'])
-        })
+        }
