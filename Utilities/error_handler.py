@@ -15,11 +15,18 @@ def handle_exception(e):
         }
         return jsonify(response)
     elif isinstance(e, KeyError):
-        response = {
-            "success":False,
-            "data": [],
-            "message": f"Trying to access key {e.args} which does not exists !!"
-        }
+        if e.args[0] == 'HTTP_AUTHORIZATION':
+            response = {
+                "success":False,
+                "data": [],
+                "message": f"you are not logged in !!!!"
+            }
+        else:
+            response = {
+                "success":False,
+                "data": [],
+                "message": f"Trying to access key {e.args} which does not exists !!"
+            }
         return jsonify(response)
     else:
         response = {
