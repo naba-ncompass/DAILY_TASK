@@ -1,12 +1,8 @@
-from ast import excepthandler
-from multiprocessing.sharedctypes import Value
-from os import truncate
 import mysql.connector
 import json 
 from Utilities import error_handler 
 from timeit import default_timer as timer
 from datetime import datetime,timedelta
-
 
 def give_response(data,message,start_time):
     end_time = datetime.now()
@@ -23,18 +19,21 @@ def give_response(data,message,start_time):
 
 def connect():
     try:
-        with open("Config/config.json") as f:
-            config = json.load(f)
-
+        with open("Config/config.json",'r') as r:
+            config = json.load(r)
         conn = mysql.connector.connect(
-            host=config["host"],
-            user=config["user"],
-            password=config["password"],
-            database= config["database"]
+            host=config['host'],
+            user=config['user'],
+            password=config['password'],
+            database= config['database'],
+            auth_plugin='mysql_native_password'
         )
+        return conn
     except Exception as e:
-        return error_handler.generate_error_response(e)    
-    return conn
+        return (e)
+        # return error_handler.generate_error_response(e)    
+
+        
 
 
 
@@ -82,17 +81,17 @@ def delete(query):
 
 
 def get_all(query):
-    conn = connect()
-    cursor = conn.cursor()
     try:
+            conn = connect()
+            print(conn)
+            cursor = conn.cursor()
             cursor.execute(query)
+            msg = cursor.fetchall()
+            conn.commit()
+            conn.close() 
+            return msg
     except Exception as e:
-        return error_handler.generate_error_response(e)
-    else:
-        msg = cursor.fetchall()
-        conn.commit()   
-        conn.close() 
-        return msg   
+        return error_handler.generate_error_response(e) 
 
 
 def get_all_id(query):
