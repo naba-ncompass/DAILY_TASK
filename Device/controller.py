@@ -1,6 +1,6 @@
-from flask import jsonify,request
+from flask import jsonify, request
 from datetime import datetime
-from Utilities import db,error_handler,compression
+from Utilities import db, error_handler, compression
 from Device import validation
 
 
@@ -11,11 +11,13 @@ def read_from_device():
     if isinstance(validity, bool):
         query = f"select * from uc3 where device = '{params['device']}'"
         output = db.read_from_table(query)
-        
-        response = db.give_response(data=output, message='operation successful', start_time=start_time)
+
+        response = db.give_response(data=output,
+                                    message='operation successful',
+                                    start_time=start_time)
         compressed_response = compression.make_compress(response)
         return compressed_response
-    
+
     else:
         return jsonify(error_handler.generate_error_response(validity))
 
@@ -27,7 +29,10 @@ def peak_consumption_between_times():
     if isinstance(validity, bool):
         query = f"select max(CONSUMPTION), DEVICE FROM uc3 where TIME(TIME) > '{params['time1']}' AND TIME(TIME) < '{params['time2']}' group by DEVICE having DEVICE = '{params['device']}'"
         output = db.read_from_table(query)
-        return jsonify(db.give_response(data=output, message='operation successful', start_time=start_time))
+        return jsonify(
+            db.give_response(data=output,
+                             message='operation successful',
+                             start_time=start_time))
     else:
         return jsonify(error_handler.generate_error_response(validity))
 
@@ -39,7 +44,10 @@ def sum_consumption_between_times():
     if isinstance(validity, bool):
         query = f"select sum(CONSUMPTION), DEVICE FROM uc3 where TIME(TIME) > '{params['time1']}' AND TIME(TIME) < '{params['time2']}' group by DEVICE having DEVICE = '{params['device']}'"
         output = db.read_from_table(query)
-        return jsonify(db.give_response(data=output, message='operation successful', start_time=start_time))
+        return jsonify(
+            db.give_response(data=output,
+                             message='operation successful',
+                             start_time=start_time))
     else:
         return jsonify(error_handler.generate_error_response(validity))
 
@@ -51,9 +59,9 @@ def duplicate_consumption_between_times():
     if isinstance(validity, bool):
         query = f"select DEVICE, TIME, COUNT(TIME), CONSUMPTION FROM uc3 where TIME(TIME) > '{params['time1']}' AND TIME(TIME) < '{params['time2']}' group by DEVICE, TIME HAVING COUNT(TIME)>1 and DEVICE = '{params['device']}'"
         output = db.read_from_table(query)
-        return jsonify(db.give_response(data=output, message='operation successful', start_time=start_time))
+        return jsonify(
+            db.give_response(data=output,
+                             message='operation successful',
+                             start_time=start_time))
     else:
         return jsonify(error_handler.generate_error_response(validity))
-
-
-

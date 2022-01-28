@@ -6,7 +6,7 @@ from Device import route as device_route
 from flask_jwt_extended import JWTManager
 
 app = Flask(__name__)
-with open('config/config.json','r') as c:
+with open('config/config.json', 'r') as c:
     app_config = json.load(c)["app_config"]
 
 app.config['JWT_SECRET_KEY'] = app_config['JWT_SECRET_KEY']
@@ -18,4 +18,4 @@ app.register_blueprint(device_route.device_routes)
 
 if __name__ == '__main__':
     app.env = 'development'
-    app.run(host=app_config['host'],port=app_config['port'],debug=True)
+    app.run(host=app_config['host'], port=app_config['port'], debug=True)
