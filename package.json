@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "express": "^4.17.2",
+    "joi": "^17.6.0",
+    "mysql": "^2.18.1",
+    "prompt-sync": "^4.2.0"
+  }
+}

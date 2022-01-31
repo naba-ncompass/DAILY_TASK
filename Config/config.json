@@ -1,0 +1,11 @@
+{   "db_config":{
+        "user": "pythonMysql",
+        "password": "pythonMysql",
+        "host": "localhost",
+        "database":"newDatabase" 
+    },
+    "app_config":{
+        "port":5000,
+        "host":"localhost"
+    }
+}
