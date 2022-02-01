@@ -1,8 +1,12 @@
 const errorHandle = (error) =>{
-    return Object.keys(error).reduce((obj,k)=>{
+    const errorInstance = Object.keys(error).reduce((obj,k)=>{
         obj[k] = error[k];
         return obj
-    },{});
+    },{})
+    errorInstance.name = error.name
+    errorInstance.message = error.message
+    return errorInstance
+
 }
 const createErrorResponse = (error,message,statusCode) =>{
     const errorData = errorHandle(error);

@@ -1,18 +1,22 @@
 const { fetchResults } = require('../Utilities/db')
 const { createErrorResponse } = require('../Utilities/errorHandler')
+const { createResponse } = require('../Utilities/responseHandler')
+const md5 = require('md5')
+const { jwtSign } = require('../Utilities/auth')
 
 
-const createResponse = (result,message=[],success = true) =>{
-    let response = new Object();
-    response.data = result;
-    response.message = message;
-    response.success = success;
-    return response
+// check where that id have access to the functions or not
+const haveAccess = async (checkId) =>{
+    let access = await fetchResults(`SELECT username FROM STUDENTS where id = (?)`,[checkId])
+    if(access.length===0) return res.status(403).send({message:"Forbidden",success:false})
 }
 
 
+// read all the students present in the database
 const readAllStudents = async (req,res,next) =>{
     try{
+        await haveAccess(req.userId)
+
         let sqlQuery = "SELECT id,name,dept,username,password FROM STUDENTS"
         results = await fetchResults(sqlQuery)
 
@@ -27,8 +31,11 @@ const readAllStudents = async (req,res,next) =>{
 }
 
 
+// reading student whose id is given
 const readSpecificStudent = async (req,res,next) =>{
     try{
+        await haveAccess(req.userId)
+
         const { id } = req.query 
         let _id = Number(id)
 
@@ -37,6 +44,7 @@ const readSpecificStudent = async (req,res,next) =>{
         result = await fetchResults(sqlQuery,sqlValue)
 
         let response = createResponse(result,"Read the data")
+        // if the no result then 404 error
         if(result.length===0){
             res.status(404).send({status:404,message:"Not found",success:false})
             return
@@ -50,17 +58,20 @@ const readSpecificStudent = async (req,res,next) =>{
 }
 
 
-
-const insertStudent = async(req,res,next) =>{
+// student signup
+const signingStudent = async(req,res,next) =>{
     try{
         const {id,name,dept,username,password} = req.body
         let _id = id
+        let passwordDigest = md5(password)
 
         let sqlQuery = `INSERT INTO STUDENTS (id,name,dept,username,password) values ? `
-        let sqlValue = [[[_id,name,dept,username,password]]]
+        let sqlValue = [[[_id,name,dept,username,passwordDigest]]]
         result = await fetchResults(sqlQuery,sqlValue)
 
-        let response = createResponse(result.affectedRows,`${result.affectedRows} row/s inserted`)
+        // creating token using jwt
+        const token = jwtSign({id:id})
+        let response = createResponse(result.affectedRows,'successful Signin',token)
         res.status(200).send(response)
     }
     catch(err){
@@ -70,9 +81,11 @@ const insertStudent = async(req,res,next) =>{
 }
 
 
-
+// update the student data
 const updateStudent = async (req,res,next) =>{
     try{
+        await haveAccess(req.userId)
+
         const { id } = req.query
         _id = Number(id)
 
@@ -93,8 +106,11 @@ const updateStudent = async (req,res,next) =>{
 }
 
 
+// delete the student
 const deleteStudent = async (req,res,next) =>{
     try{
+        await haveAccess(req.userId)
+
         const { id } = req.query
         _id = Number(id)
 
@@ -112,10 +128,38 @@ const deleteStudent = async (req,res,next) =>{
 }
 
 
+// login
+const loginStudent = async(req,res) =>{
+    try{
+        const { id, username, password } = req.body
+        let passwordDigest = md5(password)
+
+        let sqlQuery = `SELECT EXISTS (SELECT username from students where username = (?) and password = (?) and id = (?)) as present`
+        let sqlValue = [username,passwordDigest,id]
+        let result = await fetchResults(sqlQuery,sqlValue)
+        
+        // if the username,password,id not corrent then give error message with check username,password,id
+        if(result[0].present===0){
+            return res.status(404).send({status:404,message:"Not found, please check the username,password and id",success:false})
+        }
+        
+        const token = jwtSign({id:id})
+        response = createResponse(result[0].present,'Login in Successful',token)
+        res.status(200).send(response)
+    }
+    catch(err){
+        console.log(err)
+        customError = createErrorResponse(err,"Internal Server Error",500)
+        res.status(500).send(customError)
+    }
+}
+
+
 module.exports = {
     readAllStudents,
     readSpecificStudent,
-    insertStudent,
+    signingStudent,
     updateStudent,
-    deleteStudent
+    deleteStudent,
+    loginStudent
 }

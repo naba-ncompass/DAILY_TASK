@@ -17,6 +17,7 @@ const openConnection = () =>{
     })
 }
 
+// execute the sql query
 const executeQuery = (con,sqlQuery,value=[]) =>{
     return new Promise((resolve,reject)=>{
         con.query(sqlQuery,value,(err,result)=>{
@@ -27,6 +28,7 @@ const executeQuery = (con,sqlQuery,value=[]) =>{
     })
 }
 
+// fetch results after sql query
 const fetchResults = async(sqlQuery,value) =>{
     let result
     try{

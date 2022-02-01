@@ -1,11 +1,19 @@
 const express = require('express')
 const studentRoute = require('./Students/route')
 const config = require('./Config/config.json')
+const compression = require('compression')
 
 app = express()
+
+
+app.use(compression({
+    level:6
+}))
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use('/records',studentRoute)
+
+app.use('/records',studentRoute) 
 app.use((req, res)=>{
     res.status(404);
     res.send({message:"Not found",status:404,success:false});
