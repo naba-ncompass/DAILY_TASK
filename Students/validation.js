@@ -40,10 +40,26 @@ const validateMiddleware = async (req,res,next) =>{
     }
 }
 
+// only require for validation of array of objects
+const validationErrorMessage = (error) =>{
+    let messages = []
+    error.details.forEach((detail)=>{
+        let rowNumber = detail.path[0]
+        let detailMessage = detail.message
+        let id = error._original[rowNumber].id
+        let message = `In id: ${id}, the error is ${detailMessage}`
+        messages.push(message)
+    })
+    return messages
+}
+
 const validateArrayofObjectsMiddleware = async (req,res,next) =>{
     let validationResult = validateArrayOfParams(req.body)
     if(validationResult.error){
-        let errorInstance = errorHandle(400,"Bad Request",validationResult.error)
+        let err = new Error()
+        err.name = validationResult.error.name
+        err.message = validationErrorMessage(validationResult.error)
+        let errorInstance = errorHandle(400,"Bad Request",err)
         return next(errorInstance)
     }
     else{
