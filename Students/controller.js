@@ -13,7 +13,7 @@ const haveAccess = async (checkId) =>{
 
 
 // read all the students present in the database
-const readAllStudents = async (req,res,next) =>{
+const readAllStudents = async (req,res) =>{
     try{
         await haveAccess(req.userId)
 
@@ -32,7 +32,7 @@ const readAllStudents = async (req,res,next) =>{
 
 
 // reading student whose id is given
-const readSpecificStudent = async (req,res,next) =>{
+const readSpecificStudent = async (req,res) =>{
     try{
         await haveAccess(req.userId)
 
@@ -58,15 +58,43 @@ const readSpecificStudent = async (req,res,next) =>{
 }
 
 
+// insert multiple student record
+const insertMultipleStudents = async(req,res) =>{
+    try{
+        await haveAccess(req.userId)
+
+        let items = []
+        req.body.forEach((body) => {
+            let item = Object.values(body)
+            let password = item[item.length-1]
+            let passwordDisgest = md5(password)
+            item[item.length-1] = passwordDisgest // item[item.length-1] contains password
+            items.push(item)
+        })
+
+        let sqlQuery = `INSERT INTO STUDENTS (id,name,dept,username,password) values ?`
+        let sqlValue = [items]
+        result = await fetchResults(sqlQuery,sqlValue)
+
+        let response = createResponse(result.affectedRows,`${result.affectedRows} row/s inserted`)
+        res.status(200).send(response)
+    }
+    catch(err){
+        customError = createErrorResponse(err,"Internal Server Error",500)
+        res.status(500).send(customError)
+    }
+}
+
+
 // student signup
-const signingStudent = async(req,res,next) =>{
+const signingStudent = async(req,res) =>{
     try{
         const {id,name,dept,username,password} = req.body
         let _id = id
         let passwordDigest = md5(password)
 
-        let sqlQuery = `INSERT INTO STUDENTS (id,name,dept,username,password) values ? `
-        let sqlValue = [[[_id,name,dept,username,passwordDigest]]]
+        let sqlQuery = `INSERT INTO STUDENTS (id,name,dept,username,password) value (?) `
+        let sqlValue = [[_id,name,dept,username,passwordDigest]]
         result = await fetchResults(sqlQuery,sqlValue)
 
         // creating token using jwt
@@ -82,7 +110,7 @@ const signingStudent = async(req,res,next) =>{
 
 
 // update the student data
-const updateStudent = async (req,res,next) =>{
+const updateStudent = async (req,res) =>{
     try{
         await haveAccess(req.userId)
 
@@ -107,7 +135,7 @@ const updateStudent = async (req,res,next) =>{
 
 
 // delete the student
-const deleteStudent = async (req,res,next) =>{
+const deleteStudent = async (req,res) =>{
     try{
         await haveAccess(req.userId)
 
@@ -158,6 +186,7 @@ const loginStudent = async(req,res) =>{
 module.exports = {
     readAllStudents,
     readSpecificStudent,
+    insertMultipleStudents,
     signingStudent,
     updateStudent,
     deleteStudent,

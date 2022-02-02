@@ -9,10 +9,18 @@ const Schema = Joi.object({
     password: Joi.string()
 })
 
-
 const validateParams  = (body) =>{
-    return Schema.validate(body)
+    return Schema.validate(body,{abortEarly: false})
 }
+
+// for validating array of objects
+const arrayOfSchema = Joi.array().items(Schema)
+
+const validateArrayOfParams = (body) =>{
+    return arrayOfSchema.validate(body,{abortEarly: false})
+}
+
+
 
 const createValidationErrorResponse = (error) =>{
     let validationErrorResponse = new Object()
@@ -40,9 +48,21 @@ const validateMiddleware = async (req,res,next) =>{
     }
 }
 
+const validateArrayofObjectsMiddleware = async (req,res,next) =>{
+    let validationResult = validateArrayOfParams(req.body)
+    if(validationResult.error){
+        validationErrorResponse = createValidationErrorResponse(validationResult.error)
+        res.status(400).send(validationErrorResponse)
+    }
+    else{
+        next()
+    }
+}
+
 
 
 
 module.exports = {
-    validateMiddleware 
+    validateMiddleware,
+    validateArrayofObjectsMiddleware
 }
