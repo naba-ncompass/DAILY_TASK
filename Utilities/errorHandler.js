@@ -1,25 +1,19 @@
-const errorHandle = (error) =>{
-    const errorInstance = Object.keys(error).reduce((obj,k)=>{
-        obj[k] = error[k];
-        return obj
-    },{})
+const errorHandle = (statusCode,info,error=new Error()) =>{
+    errorInstance = new Error()
+    errorInstance.code = statusCode
+    errorInstance.info = info
     errorInstance.name = error.name
-    errorInstance.message = error.message
+    if(error.message.length!==0) errorInstance.message = error.message
+    errorInstance.success = false
     return errorInstance
 
 }
-const createErrorResponse = (error,message,statusCode) =>{
-    const errorData = errorHandle(error);
-    let errorResponse = new Object();
-    errorResponse.status = statusCode
-    errorResponse.success = false;
-    errorResponse.data = errorData;
-    errorResponse.message = message;
-    return errorResponse
-    
+const createErrorResponse = (err,req,res,next) =>{
+    res.status(err.code).send(err)    
 }
 
 
 module.exports = {
     createErrorResponse,
+    errorHandle
 }

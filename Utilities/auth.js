@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const config = require('../Config/config.json')
+const { errorHandle } = require('../Utilities/errorHandler')
 
 
 const jwtSign = (params) => {
@@ -10,15 +11,21 @@ const jwtSign = (params) => {
 const verifyToken = (req,res,next) =>{
     const token = req.rawHeaders[1].split(" ")[1] 
 
-    if(!token) return res.status(403).send({message:"A token is required",success:false})
+    if(!token){
+        let err = new Error()
+        err.message = "Token not found"
+        let errorInstance = errorHandle(403,"Forbidden",err)
+        return next(errorInstance)
+    }
 
     try{
         const decoded = jwt.verify(token,config.jwt_secret_key)
         req.userId = decoded.id
-        return next();
+        next();
     }
     catch(err){
-        return res.status(401).send({message:err.name,success:false})
+        let errorInstance = errorHandle(401,"Unauthorized",err)
+        next(errorInstance)
     }
 }
 

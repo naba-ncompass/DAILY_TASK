@@ -1,8 +1,9 @@
 const Joi = require("Joi")
+const { errorHandle } = require('../Utilities/errorHandler')
 
 
 const Schema = Joi.object({
-    id: Joi.number().min(1).required(),
+    id: Joi.number().min(1),
     name:Joi.string().pattern(new RegExp("^[A-Z]")),
     dept:Joi.string().pattern(new RegExp("^[A-Z]")),
     username:Joi.string().email(),
@@ -21,15 +22,6 @@ const validateArrayOfParams = (body) =>{
 }
 
 
-
-const createValidationErrorResponse = (error) =>{
-    let validationErrorResponse = new Object()
-    validationErrorResponse.status = 400
-    validationErrorResponse.message = error.details
-    validationErrorResponse.success = false
-    return validationErrorResponse
-}
-
 const validateMiddleware = async (req,res,next) =>{
     let validationResult 
     const method = await req.method
@@ -40,8 +32,8 @@ const validateMiddleware = async (req,res,next) =>{
     }
     else validationResult = validateParams(req.query)
     if(validationResult.error){
-        validationErrorResponse = createValidationErrorResponse(validationResult.error)
-        res.status(400).send(validationErrorResponse)
+        let errorInstance = errorHandle(400,"Bad Request",validationResult.error)
+        return next(errorInstance)
     }
     else{
         next()
@@ -51,8 +43,8 @@ const validateMiddleware = async (req,res,next) =>{
 const validateArrayofObjectsMiddleware = async (req,res,next) =>{
     let validationResult = validateArrayOfParams(req.body)
     if(validationResult.error){
-        validationErrorResponse = createValidationErrorResponse(validationResult.error)
-        res.status(400).send(validationErrorResponse)
+        let errorInstance = errorHandle(400,"Bad Request",validationResult.error)
+        return next(errorInstance)
     }
     else{
         next()

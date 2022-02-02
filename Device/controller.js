@@ -1,8 +1,8 @@
 const { fetchResults } = require('../Utilities/db')
-const { createErrorResponse } = require('../Utilities/errorHandler')
+const { errorHandle } = require('../Utilities/errorHandler')
 const { createResponse } = require('../Utilities/responseHandler')
 
-const getPeakConsumption = async(req,res) =>{
+const getPeakConsumption = async(req,res,next) =>{
     try{
         const { time1, time2, device } = req.query 
         let sqlQuery = `SELECT MAX(CONSUMPTION),DEVICE FROM DC where TIME(TIME) > ? and TIME(TIME) < ? group by DEVICE having DEVICE = ?`
@@ -13,12 +13,12 @@ const getPeakConsumption = async(req,res) =>{
         res.status(200).send(response)
     }
     catch(err){
-        customError = createErrorResponse(err,"Internal Server Error",500)
-        res.status(500).send(customError)
+        let errorInstance = errorHandle(500,"Internal server error",err)
+        next(errorInstance)
     }
 }
 
-const getSumConsumption = async(req,res) =>{
+const getSumConsumption = async(req,res,next) =>{
     try{
         const { time1, time2, device } = req.query 
         let sqlQuery = `SELECT SUM(CONSUMPTION),DEVICE FROM DC where TIME(TIME) > ? and TIME(TIME) < ? group by DEVICE having DEVICE = ?`
@@ -29,12 +29,12 @@ const getSumConsumption = async(req,res) =>{
         res.status(200).send(response)
     }
     catch(err){
-        customError = createErrorResponse(err,"Internal Server Error",500)
-        res.status(500).send(customError)
+        let errorInstance = errorHandle(500,"Internal server error",err)
+        next(errorInstance)
     }
 }
 
-const getDuplicateTime = async(req,res) =>{
+const getDuplicateTime = async(req,res,next) =>{
     try{
         const { time1, time2, device } = req.query 
         let sqlQuery = `SELECT DEVICE,TIME,COUNT(TIME) as COUNT FROM DC where TIME(TIME) > ? and TIME(TIME) < ? group by DEVICE, TIME HAVING COUNT(TIME)>1 and DEVICE = ?`
@@ -45,8 +45,8 @@ const getDuplicateTime = async(req,res) =>{
         res.status(200).send(response)
     }
     catch(err){
-        customError = createErrorResponse(err,"Internal Server Error",500)
-        res.status(500).send(customError)
+        let errorInstance = errorHandle(500,"Internal server error",err)
+        next(errorInstance)
     }
 }
 

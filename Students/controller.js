@@ -1,22 +1,14 @@
 const { fetchResults } = require('../Utilities/db')
-const { createErrorResponse } = require('../Utilities/errorHandler')
+const { errorHandle } = require('../Utilities/errorHandler')
 const { createResponse } = require('../Utilities/responseHandler')
 const md5 = require('md5')
 const { jwtSign } = require('../Utilities/auth')
 
 
-// check where that id have access to the functions or not
-const haveAccess = async (checkId) =>{
-    let access = await fetchResults(`SELECT username FROM STUDENTS where id = (?)`,[checkId])
-    if(access.length===0) return res.status(403).send({message:"Forbidden",success:false})
-}
-
 
 // read all the students present in the database
-const readAllStudents = async (req,res) =>{
+const readAllStudents = async (req,res,next) =>{
     try{
-        await haveAccess(req.userId)
-
         let sqlQuery = "SELECT id,name,dept,username,password FROM STUDENTS"
         results = await fetchResults(sqlQuery)
 
@@ -24,18 +16,16 @@ const readAllStudents = async (req,res) =>{
         res.status(200).send(response)
     }
     catch(err){
-        customError = createErrorResponse(err,"Internal Server Error",500)
-        res.status(500).send(customError)
+        let errorInstance = errorHandle(500,"Internal server error",err)
+        next(errorInstance)
     }
 
 }
 
 
 // reading student whose id is given
-const readSpecificStudent = async (req,res) =>{
+const readSpecificStudent = async (req,res,next) =>{
     try{
-        await haveAccess(req.userId)
-
         const { id } = req.query 
         let _id = Number(id)
 
@@ -46,23 +36,22 @@ const readSpecificStudent = async (req,res) =>{
         let response = createResponse(result,"Read the data")
         // if the no result then 404 error
         if(result.length===0){
-            res.status(404).send({status:404,message:"Not found",success:false})
+            let errorInstance = errorHandle(404,"Not Found")
+            next(errorInstance)
             return
         }
         res.status(200).send(response)
     }
     catch(err){
-        customError = createErrorResponse(err,"Internal Server Error",500)
-        res.status(500).send(customError)
+        let errorInstance = errorHandle(500,"Internal server error",err)
+        next(errorInstance)
     }
 }
 
 
 // insert multiple student record
-const insertMultipleStudents = async(req,res) =>{
+const insertMultipleStudents = async(req,res,next) =>{
     try{
-        await haveAccess(req.userId)
-
         let items = []
         req.body.forEach((body) => {
             let item = Object.values(body)
@@ -80,14 +69,14 @@ const insertMultipleStudents = async(req,res) =>{
         res.status(200).send(response)
     }
     catch(err){
-        customError = createErrorResponse(err,"Internal Server Error",500)
-        res.status(500).send(customError)
+        let errorInstance = errorHandle(500,"Internal server error",err)
+        next(errorInstance) 
     }
 }
 
 
 // student signup
-const signingStudent = async(req,res) =>{
+const signingStudent = async(req,res,next) =>{
     try{
         const {id,name,dept,username,password} = req.body
         let _id = id
@@ -103,18 +92,16 @@ const signingStudent = async(req,res) =>{
         res.status(200).send(response)
     }
     catch(err){
-        customError = createErrorResponse(err,"Internal Server Error",500)
-        res.status(500).send(customError)
+        let errorInstance = errorHandle(500,"Internal server error",err)
+        next(errorInstance) 
     }
 }
 
 
 // update the student data
-const updateStudent = async (req,res) =>{
+const updateStudent = async (req,res,next) =>{
     try{
-        await haveAccess(req.userId)
-
-        const { id } = req.query
+        const id = req.userId
         _id = Number(id)
 
         let columnName = Object.keys(req.body)[0]
@@ -128,19 +115,20 @@ const updateStudent = async (req,res) =>{
         res.status(200).send(response)
     }
     catch(err){
-        customError = createErrorResponse(err,"Internal Server Error",500)
-        res.status(500).send(customError)
+        let errorInstance;
+        if(err.name==="No Access") errorInstance = errorHandle(403,"Forbidden",err)
+        else errorInstance = errorHandle(500,"Internal server error",err)
+        next(errorInstance)
     }
 }
 
 
 // delete the student
-const deleteStudent = async (req,res) =>{
+const deleteStudent = async (req,res,next) =>{
     try{
-        await haveAccess(req.userId)
-
-        const { id } = req.query
+        const id = req.userId
         _id = Number(id)
+
 
         let sqlQuery = `DELETE FROM STUDENTS WHERE ID = (?)`
         let sqlValue = [_id]
@@ -150,14 +138,14 @@ const deleteStudent = async (req,res) =>{
         res.status(200).send(response)
     }
     catch(err){
-        customError = createErrorResponse(err,"Internal Server Error",500)
-        res.status(500).send(customError)
+        let errorInstance = errorHandle(500,"Internal server error",err)
+        next(errorInstance)
     }
 }
 
 
 // login
-const loginStudent = async(req,res) =>{
+const loginStudent = async(req,res,next) =>{
     try{
         const { id, username, password } = req.body
         let passwordDigest = md5(password)
@@ -168,7 +156,10 @@ const loginStudent = async(req,res) =>{
         
         // if the username,password,id not corrent then give error message with check username,password,id
         if(result[0].present===0){
-            return res.status(404).send({status:404,message:"Not found, please check the username,password and id",success:false})
+            let errorInstance = errorHandle(404,"Not Found, please check username,password,id")
+            //res.status(errorInstance.code).send(errorInstance)
+            next(errorInstance)
+            return
         }
         
         const token = jwtSign({id:id})
@@ -176,9 +167,8 @@ const loginStudent = async(req,res) =>{
         res.status(200).send(response)
     }
     catch(err){
-        console.log(err)
-        customError = createErrorResponse(err,"Internal Server Error",500)
-        res.status(500).send(customError)
+        let errorInstance = errorHandle(500,"Internal server error",err)
+        next(errorInstance) 
     }
 }
 
