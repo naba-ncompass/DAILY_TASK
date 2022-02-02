@@ -2,12 +2,12 @@ const mysql = require('mysql')
 const config = require('../Config/config.json')
 
 
-const openConnection = () =>{
+const openConnection = (dbIndex) =>{
     const con = mysql.createConnection({  
         host:config.db_config.host,
         user:config.db_config.user,
         password:config.db_config.password,
-        database:config.db_config.database
+        database:config.db_config.database[dbIndex]
     })
     return new Promise((resolve,reject) => {
         con.connect((err)=>{
@@ -29,10 +29,10 @@ const executeQuery = (con,sqlQuery,value=[]) =>{
 }
 
 // fetch results after sql query
-const fetchResults = async(sqlQuery,value) =>{
+const fetchResults = async(sqlQuery,value,dbIndex=0) =>{
     let result
     try{
-        con = await openConnection()
+        con = await openConnection(dbIndex)
         result = await executeQuery(con,sqlQuery,value)
         return result
     }catch(err){
