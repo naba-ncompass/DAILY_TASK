@@ -1,16 +1,11 @@
 //funtion to create custom error response
-const errorResponse = (result) => {
+const errorResponse = (result,res) => {
   let resObj = {};
   resObj.success = false;
   //422 -> specifically validation error
-  if (result.err_code === 422) {
-    resObj.message = result.errors;
-    resObj.status = result.err_code;
-  } else {
     resObj.message = result.message;
     resObj.status = result.err_code;
-  }
-  return resObj;
+  return res.status(resObj.status).json(resObj);
 };
 
 //function to customize delete and update responses
@@ -48,11 +43,8 @@ const multiResponse = (result) => {
 const customResponse = (result, res) => {
   let resObj = {};
 
-  if ("err_code" in result) {
-    resObj = errorResponse(result);
-  }
   //customizes login and insert responses
-  else if ("token" in result) {
+  if ("token" in result) {
     resObj.success = true;
     resObj.message = result.message;
     resObj.token = result.token;

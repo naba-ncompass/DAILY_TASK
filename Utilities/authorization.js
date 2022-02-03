@@ -11,24 +11,7 @@ const auth = (req, res, next) => {
     req.userData = decoded;
     next();
   } catch (err) {
-    
-    if (err.name === "TypeError") {
-      return customResponse(
-        { err_code: 401, message: "Please enter token" },
-        res
-      );
-    } else if (err.name === "TokenExpiredError") {
-      return customResponse(
-        { err_code: 401, message: "Token has expired , login again" },
-        res
-      );
-    } else if (err.name === "JsonWebTokenError") {
-      return customResponse(
-        { err_code: 401, message: "Please enter a correct token" },
-        res
-      );
-    }
-    return customResponse({ err_code: 401, message: err.message }, res);
+   next(err)
   }
 };
 
@@ -36,7 +19,8 @@ const auth = (req, res, next) => {
 const createToken = (user) => {
   const token = jwt.sign(
     {
-      username: user,
+      username: user.username,
+      id: user.id
     },
     config.JWTKEY,
     { expiresIn: "5m" }

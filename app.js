@@ -7,12 +7,14 @@ const config = require('./Config/config.json')
 const studentRouter = require('./Students/routes')
 const deviceRouter = require('./Device/routes')
 const { customResponse } = require('./Utilities/custom-response')
+const { globalErrCatcher } = require('./Utilities/errorhandling')
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(compression({ level  : 6}))
 app.use('/student',studentRouter);
 app.use('/device', deviceRouter)
+app.use(globalErrCatcher)
 //menu.menu()
 
 app.use(function (req, res) {

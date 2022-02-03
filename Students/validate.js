@@ -1,6 +1,5 @@
 const Ajv = require("ajv");
 const addFormats = require("ajv-formats");
-const { customResponse } = require("../Utilities/custom-response");
 const ajv = new Ajv({ allErrors: true });
 addFormats(ajv);
 
@@ -10,7 +9,10 @@ const parseErrors = (errors) => {
   errors.forEach((error) => {
     parsedErr.push(error.instancePath.slice(1) + " " + error.message);
   });
-  return { err_code: 422, errors: parsedErr };
+
+  let err = new Error(parsedErr)
+  err.name = 'ValidationError'
+  return err
 };
 
 //verifies validation and parses and customizes response
@@ -18,7 +20,7 @@ const validate = (ajvValidate, body, res, next) => {
   const valid = ajvValidate(body);
   if (!valid) {
     const errors = ajvValidate.errors;
-    return customResponse(parseErrors(errors), res);
+    next(parseErrors(errors))
   } else {
     return next();
   }
@@ -54,10 +56,9 @@ const validateUpdate = (req, res, next) => {
     type: "object",
     properties: {
       column: { enum: ["username", "email", "phone_no"] },
-      id: { type: "integer" },
       new_value: { type: "string" },
     },
-    required: ["column", "id", "new_value"],
+    required: ["column", "new_value"],
   };
 
   return validate(ajv.compile(updateSchema), req.body, res, next);
