@@ -1,0 +1,24 @@
+{
+  "name": "naba",
+  "version": "1.0.0",
+  "description": "naba",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@hapi/joi": "^17.1.1",
+    "body-parser": "^1.19.1",
+    "compression": "^1.7.4",
+    "express": "^4.17.2",
+    "express-validator": "^6.14.0",
+    "fs": "^0.0.1-security",
+    "joi": "^17.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "jwt": "^0.2.0",
+    "md5": "^2.3.0",
+    "mysql": "^2.18.1",
+    "nodemon": "^2.0.15",
+    "prompt-sync": "^4.2.0",
+    "regex": "^0.1.1",
+    "zlib": "^1.0.5"
+  }
+}
