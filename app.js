@@ -1,6 +1,7 @@
 const express = require('express')
 const studentRoute = require('./Students/route')
 const deviceRouter = require('./Device/route')
+const postalRouter = require('./PostalPin/route')
 const config = require('./Config/config.json')
 const compression = require('compression')
 
@@ -16,6 +17,7 @@ app.use(express.urlencoded({ extended: true }))
 
 app.use('/records',studentRoute) 
 app.use('/device',deviceRouter)
+app.use('/postal',postalRouter)
 
 app.use((req, res)=>{
     res.status(404);

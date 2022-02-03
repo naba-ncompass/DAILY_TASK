@@ -1,5 +1,5 @@
 const errorHandle = (statusCode,info,error=new Error()) =>{
-    errorInstance = new Error()
+    let errorInstance = new Error()
     errorInstance.code = statusCode
     errorInstance.info = info
     errorInstance.name = error.name
