@@ -6,6 +6,7 @@ const compression = require('compression')
 const config = require('./Config/config.json')
 const studentRouter = require('./Students/routes')
 const deviceRouter = require('./Device/routes')
+const addressRouter = require('./PostOffice/routes')
 const { customResponse } = require('./Utilities/custom-response')
 const { globalErrCatcher } = require('./Utilities/errorhandling')
 
@@ -14,6 +15,7 @@ app.use(bodyParser.json());
 app.use(compression({ level  : 6}))
 app.use('/student',studentRouter);
 app.use('/device', deviceRouter)
+app.use('/postoffice',addressRouter)
 app.use(globalErrCatcher)
 //menu.menu()
 
