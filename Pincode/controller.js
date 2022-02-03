@@ -34,7 +34,7 @@ const pincode = async (req,res) => {
         if (redix_value)
         {
             console.log("_---------------")
-            // await redisClient.quit();
+            await redisClient.quit();
             res.status(400).send(JSON.parse(redix_value));
         }
         else{
