@@ -187,10 +187,11 @@ const truncateEmployee = async () => {
 
 const signinEmployee = async (req, res) => {
     try {
+        console.log(req.body)
         let email = req.body.email;
         let password = req.body.password;
         let passwordDigit = md5(password);
-        const inputData = [email, passwordDigit];
+        const inputData = [email];
         if (!(email && password)) {
             res.status(400).json(responsehandler.makeErrorResponse("All input is required SOMETHING IS MISSING", error.message));
         }
