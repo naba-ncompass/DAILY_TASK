@@ -2,6 +2,7 @@ const config = require('./Config/config');
 const express = require('express');
 const employeeRoutes = require('./Employee/route');
 const deviceRoutes = require('./Device/route');
+const pincodes = require('./Pincode/route');
 const compression = require('compression');
 
 const app = express();
@@ -12,11 +13,13 @@ app.use(compression({
 
 app.use(employeeRoutes);
 app.use(deviceRoutes);
-
+app.use(pincodes);
 
 app.get('/', (req, res) => {
     res.send('Hello World');
 });
+
+//app.get(('/pincode', pincodes));
 
 
 app.listen(config.port, () => {
