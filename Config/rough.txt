@@ -2,8 +2,10 @@
     "host": "merchant.c78uwveckyfx.us-east-1.rds.amazonaws.com",
     "user": "naba",
     "password": "naba",
-    "database": "naba_db"
-    },
+    "database": "naba_ratan_db",
+    "port": "8004",
+    "token": "asdfghjklqwertyuiopzxcvbnm"
+},
 {
     "host": "localhost",
     "user": "root",

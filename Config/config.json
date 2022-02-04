@@ -1,8 +1,10 @@
 {
+    "apphost": "0.0.0.0",
+    "appport": "8004",
     "host": "merchant.c78uwveckyfx.us-east-1.rds.amazonaws.com",
     "user": "naba",
     "password": "naba",
     "database": "naba_ratan_db",
-    "port": "8004",
+    "port": "3306",
     "token": "asdfghjklqwertyuiopzxcvbnm"
 }

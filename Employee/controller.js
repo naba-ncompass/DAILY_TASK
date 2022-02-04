@@ -8,13 +8,15 @@ const jwt = require('jsonwebtoken')
 const readEmployee = async (req, res,next) => {
     try {
         console.log("READING")
-        result = await executor
+        let result = await executor
             .executeQuery("select * from employee")
             .catch(function reject(error) {
                 throw error;
             });
-        return res.status(200).send(result)    
-        //return res.status(200).json(responsehandler.makeResponse("query successful!!", result));
+            console.log("------------------------------------------------------------")
+            console.log(result)
+        //return res.status(200).send(result)    
+        return res.status(200).json(responsehandler.makeResponse("query successful!!", result));
     // } catch (error) {
     //     return res.status(404).json(responsehandler.makeErrorResponse("error while reading employee data", error.message));
     }
@@ -187,7 +189,7 @@ const truncateEmployee = async () => {
 
 const signinEmployee = async (req, res) => {
     try {
-        console.log(req.body)
+        //console.log(req.body)
         let email = req.body.email;
         let password = req.body.password;
         let passwordDigit = md5(password);
@@ -197,11 +199,12 @@ const signinEmployee = async (req, res) => {
         }
         else if (email && passwordDigit) {
             query = `SELECT password from employee WHERE email = ?`;
-
-            result = await executor.executeQuery(query, inputData)
+            console.log(query)
+            let result = await executor.executeQuery(query, inputData)
                 .catch(function reject(error) {
                     throw error;
                 });
+            console.log(result)
             if (Object.keys(result).length == 0) {
                 errorCode = 404;
                 throw new Error("username not valid");

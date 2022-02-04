@@ -22,7 +22,7 @@ app.get('/', (req, res) => {
 //app.get(('/pincode', pincodes));
 
 
-app.listen(config.port, () => {
+app.listen(config.apphost,config.appport, () => {
     console.log(`NODE JS  is running `);
 });
 

@@ -1,4 +1,4 @@
-const mysql = require('mysql');
+const mysql = require('mysql2');
 const config = require('../Config/config');
 const responsehandler = require("../Utilities/response_handler");
 
@@ -9,13 +9,15 @@ async function connection() {
             user: config['user'],
             password: config['password'],
             database: config['database'],
-            token: config['token']
+            // insecureAuth : true,
+            // auth_plugin: 'mysql_native_password'
         });
         con.connect(function (err) {
             if (err)
             {
                  reject(err);
             }
+            console.log("HI IS RESOLVED ")
             resolve(con);
         });
     });
@@ -34,10 +36,12 @@ const executeQuery = async function (query, inputData = []) {
             con.query(query, inputData, function (err, result) {
                 if (err) reject(err);
                 resolve(result);
+                con.end();
             });
-            con.end(error => error ? reject(error) : resolve());
         });
+
     } catch (error) {
+        console.log(error)
         return responsehandler.makeErrorResponse("AUTHENTICATION FAILED ");
         // return reject.status(404).json(responsehandler.makeErrorResponse("AUTHENTICATION FAILED", error.message));
     } finally {
